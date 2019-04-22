@@ -241,8 +241,9 @@ var Eng2pPlugin = function(node) {
 	ext.on('message', function(e) {
 		if (e.data.messagetype == 'textload' && e.data.type == 'bible') {
 
-
-			if ((e.data.content.attr('lang') == 'en' || e.data.content.attr('lang') == 'eng') && eng2pSetting.eng2p != 'none') {
+			var lang = e.data.content.attr('lang').toLowerCase();
+			
+			if ((lang == 'en-gb' || lang == 'en-us' || lang == 'en' || lang == 'eng') && eng2pSetting.eng2p != 'none') {
 				//console.log('Eng2P', e.data.content.attr('data-id'));
 
 				runPluralTransforms(e.data.content);
@@ -262,7 +263,7 @@ sofia.plugins.push('Eng2pPlugin');
 
 bible.eng2p = {
 
-	youPluralRegExp:  /\b([yY])ou(r|rs|rselves)?\b/g,
+	youPluralRegExp:  /\b([yY])(ou(r|rs|rselves)|e)?\b/g,
 
 	youPluralSubject: "Y'all",
 	youPluralPossessiveDeterminer: "Y'all's",
@@ -305,6 +306,7 @@ bible.eng2p = {
 
 			// you, your, yours checker
 			switch (match.toLowerCase()) {
+				case 'ye':
 				case 'you':
 					replacement = bible.eng2p.youPluralSubject;
 					break;
